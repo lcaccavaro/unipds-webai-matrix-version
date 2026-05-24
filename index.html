@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebAI Matrix Console</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="matrix-rain"></div>
+
+    <div class="terminal-shell">
+        <div class="terminal-header">
+            <div class="title">UNIPDS WEBAI MATRIX</div>
+            <div class="status">STATUS: ONLINE</div>
+        </div>
+
+        <div class="terminal-window">
+            <div class="terminal-content">
+                <div class="terminal-intro">
+                    <span class="prompt">&gt; </span><span>Sistema Matrix iniciado. Digite seu comando abaixo.</span>
+                </div>
+
+                <div id="output" class="terminal-output"></div>
+
+                <form id="question-form" class="terminal-form">
+                    <label for="question" id="prompt-label">&gt; COMANDO:</label>
+                    <textarea name="question" id="question" placeholder="Digite sua pergunta aqui..." autocomplete="off"></textarea>
+
+                    <div class="terminal-controls">
+                        <div class="parameter">
+                            <label for="temperature">Temperature: <span id="temp-value" class="value-display">0</span></label>
+                            <input type="range" id="temperature" name="temperature" step="0.25" min="0" max="2">
+                        </div>
+                        <div class="parameter">
+                            <label for="topK">Top K:</label>
+                            <input type="number" id="topK" name="topK" min="1" step="1">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="ask-button">Enviar</button>
+                </form>
+            </div>
+        </div>
+
+        <footer class="matrix-footer">
+            Lucas Caccavaro - Engenharia de Software com IA Aplicada - UNIPDS - <span id="year"></span>
+        </footer>
+    </div>
+
+    <script type="module" src="./index.js"></script>
+</body>
+
+</html>
