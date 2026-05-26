@@ -133,6 +133,13 @@ async function* askAI(question, temperature, topK) {
                 content: `Você é um assistente de IA que responde de forma clara e objetiva. Responda sempre em formato de texto ao invés de markdown`,
             },
         ],
+
+        monitor(m) {
+            m.addEventListener('downloadprogress', (e) => {
+                const percent = ((e.loaded / e.total) * 100).toFixed(0);
+                console.log(`Downloaded ${percent}%`);
+            });
+        }
     });
 
     aiContext.session = session;
@@ -185,32 +192,11 @@ async function checkRequirements() {
     }
 
     if (availability === 'downloading') {
-        errors.push('⚠️ O modelo de linguagem de IA está sendo baixado. Por favor, aguarde alguns minutos e tente novamente.');
+        appendTerminalLine('⚠️ O modelo de linguagem de IA está sendo baixado. Por favor, A primeira resposta pode demorar.', 'ai-line');
     }
 
     if (availability === 'downloadable') {
-        errors.push('⚠️ O modelo de linguagem de IA precisa ser baixado, baixando agora... (acompanhe o progresso no terminal do chrome)');
-        try {
-            const session = await LanguageModel.create({
-                expectedInputLanguages: ['pt'],
-                monitor(m) {
-                    m.addEventListener('downloadprogress', (e) => {
-                        const percent = ((e.loaded / e.total) * 100).toFixed(0);
-                        console.log(`Downloaded ${percent}%`);
-                    });
-                },
-            });
-            await session.prompt('Olá');
-            session.destroy();
-
-            const newAvailability = await LanguageModel.availability({ languages: ['pt'] });
-            if (newAvailability === 'available') {
-                return null;
-            }
-        } catch (error) {
-            console.error('Error downloading model:', error);
-            errors.push(`⚠️ Erro ao baixar o modelo: ${error.message}`);
-        }
+        appendTerminalLine('⚠️ O modelo de linguagem de IA precisa ser baixado. O download iniciará ao enviar a primeira mensagem (acompanhe o progresso no console do Chrome).', 'ai-line');
     }
 
     return returnResults();
@@ -226,6 +212,7 @@ async function checkRequirements() {
         return;
     }
 
+    try {
     const params = await LanguageModel.params();
     console.log('Language Model Params:', params);
 
@@ -238,6 +225,9 @@ async function checkRequirements() {
     elements.temperature.max = params.maxTemperature;
     elements.temperature.min = 0;
     elements.temperature.value = params.defaultTemperature;
+    } catch (e) {
+        console.warn('Não foi possível carregar os parâmetros do Language Model (modelo pode não estar baixado ainda):', e);
+    }
 
     await setupEventListeners();
 })();
